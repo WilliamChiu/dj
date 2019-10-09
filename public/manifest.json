@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Spec DJ",
+  "name": "Queue music together",
   "icons": [
     {
       "src": "favicon.ico",
