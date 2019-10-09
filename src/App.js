@@ -133,6 +133,7 @@ class App extends React.Component {
       chat: [],
       role: "pending"
     }
+    this.makeSocket = this.makeSocket.bind(this)
     this.appendToMessages = this.appendToMessages.bind(this)
     this.appendToChat = this.appendToChat.bind(this)
     this.handleVideoEnd = this.handleVideoEnd.bind(this)
@@ -145,17 +146,28 @@ class App extends React.Component {
 
   async componentDidMount() {
     console.log("Mounting...")
-    setTimeout(() => {
-      if (this.state.role === "pending") {
-        socket.send(JSON.stringify({
-          intent: "presenter exists",
-          messages: this.state.messages,
-        }))
-        this.setState({ role: "presenter" })
+    this.makeSocket()
+    
+    window.addEventListener('beforeunload', () =>{    
+      if (this.state.role === "presenter") this.state.socket.send(JSON.stringify({
+        intent: "presenter leaving"
+      }))
+    })
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === 'visible') {
+        console.log("Checking socket health...")
+        if (this.state.socket.readyState !== WebSocket.OPEN && this.state.socket.readyState !== WebSocket.CONNECTING) {
+          console.log("Remounting, websocket was ", this.state.socket.readyState)
+          this.state.socket.close()
+          this.makeSocket()
+        }
       }
-    }, 5000)
+    })
+  }
+
+  makeSocket() {
     let socket = new WebSocket("wss://connect.websocket.in/spec?room_id=queue-" + (window.location.pathname.slice(1) || 1))
-    console.log("Connected to " + (window.location.pathname.slice(1) || 1))
     socket.addEventListener('message', message => {
       let parsed = JSON.parse(message.data)
       if (parsed.intent === "look for presenter"
@@ -207,21 +219,16 @@ class App extends React.Component {
         socket
       })
     })
-    window.addEventListener('beforeunload', () =>{    
-      if (this.state.role === "presenter") socket.send(JSON.stringify({
-        intent: "presenter leaving"
-      }))
-    })
-    document.addEventListener("visibilitychange", () => {
-      if (document.visibilityState === 'visible') {
-        console.log("Checking socket health...")
-        if (socket.readyState !== WebSocket.OPEN && socket.readyState !== WebSocket.CONNECTING) {
-          console.log("Remounting...")
-          socket.close()
-          this.componentDidMount()
-        }
+    setTimeout(() => {
+      if (this.state.role === "pending") {
+        socket.send(JSON.stringify({
+          intent: "presenter exists",
+          messages: this.state.messages,
+        }))
+        this.setState({ role: "presenter" })
       }
-    })
+    }, 3000)
+    return socket
   }
 
   componentWillUnmount() {
