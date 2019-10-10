@@ -178,9 +178,9 @@ class App extends React.Component {
         }))
       }
       else if (parsed.intent === "look for presenter"
-        && this.state.role === "no current presenter") {
+        && this.state.role === "no presenter") {
         socket.send(JSON.stringify({
-          intent: "no current presenter",
+          intent: "no presenter",
           messages: this.state.messages,
         }))
       }
@@ -190,15 +190,15 @@ class App extends React.Component {
           role: "client"
         })
       }
-      else if (parsed.intent === "no current presenter") {
+      else if (parsed.intent === "no presenter") {
         this.setState({
           messages: parsed.messages,
-          role: "no current presenter"
+          role: "no presenter"
         })
       }
       else if (parsed.intent === "presenter leaving") {
         this.setState({
-          role: "no current presenter"
+          role: "no presenter"
         })
       }
       else if (parsed.intent === "messages changed") {
@@ -347,7 +347,7 @@ class App extends React.Component {
             <PresenterButton>{this.state.role === "pending" ? "CLIENT" : this.state.role.toUpperCase()}</PresenterButton>
             {
               this.state.role !== "presenter" &&
-              this.state.role !== "no current presenter" &&
+              this.state.role !== "no presenter" &&
               this.state.messages[0] &&
               <Controls
                 goBack={this.goBack}
@@ -356,7 +356,7 @@ class App extends React.Component {
               />
             }
             {
-              this.state.role === "no current presenter" && <div><StyledButton onClick={this.handlePresent}>Present</StyledButton></div>
+              this.state.role === "no presenter" && <div><StyledButton onClick={this.handlePresent}>Present</StyledButton></div>
             }
           </ActionsContainer>
           {
