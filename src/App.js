@@ -73,6 +73,7 @@ const Container = styled.div`
 
   & > * {
     margin: 1rem;
+    min-width: 20rem;
     * {
       font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
       font-weight: 200;
