@@ -15,5 +15,9 @@ export default {
   idToName: async id => {
     let result = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${id}`)
     return (await result.json()).title
+  },
+  urlToName: async url => {
+    let result = await fetch(`https://noembed.com/embed?url=${url}`)
+    return (await result.json()).title
   }
 }

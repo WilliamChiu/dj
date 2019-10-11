@@ -4,7 +4,7 @@ import styled, {createGlobalStyle} from 'styled-components'
 import Form from './components/Form'
 import Chat from './components/Chat'
 import Controls from './components/Controls'
-import YoutubePlayer from './components/YoutubePlayer'
+import VideoPlayer from './components/VideoPlayer'
 import youtubeFetcher from './utils/youtubeFetcher'
 
 const Global = createGlobalStyle`
@@ -236,13 +236,14 @@ class App extends React.Component {
     this.state.socket.close()
   }
 
-  async appendToMessages(message) {
-    let id = youtubeFetcher.urlToID(message)
-    let name = await youtubeFetcher.idToName(id)
+  async appendToMessages(url) {
+    // let id = youtubeFetcher.urlToID(message)
+    // let name = await youtubeFetcher.idToName(id)
+    let name = await youtubeFetcher.urlToName(url)
     let time = new Date().getTime() // play the same video twice in a row
-    if (id && name) this.setState(state => {
+    if (name) this.setState(state => {
       return {
-        messages: state.messages.concat([{id, name, time}])
+        messages: state.messages.concat([{url, name, time}])
       }
     })
   }
@@ -401,8 +402,8 @@ class App extends React.Component {
       {
         this.state.role === "presenter" &&
         this.state.messages[0] &&
-        <YoutubePlayer
-          videoId={this.state.messages[0].id}
+        <VideoPlayer
+          videoUrl={this.state.messages[0].url}
           time={this.state.messages[0].time}
           handleVideoEnd={this.handleVideoEnd}
           socket={this.state.socket}
