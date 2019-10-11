@@ -222,6 +222,7 @@ function withSocket(Wrapped) {
         messages={this.state.messages}
         chat={this.state.chat}
         role={this.state.role}
+        socket={this.state.socket}
         appendToMessages={this.appendToMessages}
         appendToChat={this.appendToChat}
         handleVideoEnd={this.handleVideoEnd}
