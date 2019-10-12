@@ -41,7 +41,7 @@ class Form extends React.Component {
   render() {
     return (
       <form onSubmit={this.handleSubmit}>
-        <StyledInput type="text" value={this.state.value} onChange={this.handleChange} placeholder="YouTube URLs here"/>
+        <StyledInput type="text" value={this.state.value} onChange={this.handleChange} placeholder="Media URLs here"/>
       </form>
     )
   }
