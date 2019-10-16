@@ -193,6 +193,7 @@ class App extends React.Component {
           time={this.props.messages[0].time}
           handleVideoEnd={this.props.handleVideoEnd}
           socket={this.props.socket}
+          table={this.props.table}
         />
       }
       </Container>

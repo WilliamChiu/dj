@@ -17,7 +17,8 @@ function withSocket(Wrapped) {
       this.state = {
         messages: [],
         chat: [],
-        role: "pending"
+        role: "pending",
+        table: false
       }
       this.makeSocket = this.makeSocket.bind(this)
       this.appendToMessages = this.appendToMessages.bind(this)
@@ -133,6 +134,12 @@ function withSocket(Wrapped) {
     }
 
     async appendToChat(chat) {
+      if (chat.message === "/table"
+        && this.state.role === "presenter") {
+        this.setState(state => ({
+          table: !state.table
+        }))
+      }
       chat.travelTime = 10 * Math.random() + 10
       this.setState(state => {
         return {
@@ -231,6 +238,7 @@ function withSocket(Wrapped) {
         goBack={this.goBack}
         pauseOrPlay={this.pauseOrPlay}
         goForward={this.goForward}
+        table={this.state.table}
       />
     }
   }
