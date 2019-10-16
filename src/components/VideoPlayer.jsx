@@ -6,7 +6,8 @@ class YoutubePlayer extends React.Component {
     super(props);
 
     this.state = {
-      playing: true
+      playing: true,
+      vol: .5,
     }
 
     this.player = React.createRef()
@@ -35,6 +36,16 @@ class YoutubePlayer extends React.Component {
       }
     } else if (parsed.intent === "go forward") {
       this.player.current.seekTo(currentTime + 10, true)
+    } else if(parsed.intent == "increase volume") {
+      let currentVol = this.state.vol
+      if(this.state.vol < .9){
+        this.setState({vol: currentVol+.1})
+      }
+    } else if(parsed.intent == "decrease volume") {
+      let currentVol = this.state.vol
+      if(this.state.vol > .1){
+        this.setState({vol: currentVol-.1})
+      }
     }
   }
 
@@ -42,6 +53,7 @@ class YoutubePlayer extends React.Component {
     console.log(`YouTube Player object for videoUrl: "${this.props.videoUrl}" has been saved to state.`); // eslint-disable-line
     this.setState({
       player: event.target,
+      vol: .5,
     });
   }
 
@@ -55,6 +67,7 @@ class YoutubePlayer extends React.Component {
         height="390px"
         controls={true}
         playing={this.state.playing}
+        volume={this.state.vol}
         onEnded={this.props.handleVideoEnd}
       />
     );
