@@ -140,6 +140,10 @@ function withSocket(Wrapped) {
           table: !state.table
         }))
       }
+      else if (chat.message === "/rick"
+        && this.state.role === "presenter") {
+        this.appendToMessages("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+      }
       chat.travelTime = 10 * Math.random() + 10
       this.setState(state => {
         return {
