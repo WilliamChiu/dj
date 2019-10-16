@@ -226,6 +226,8 @@ class YoutubePlayer extends React.Component {
       <Container
         table={this.props.table}
         playing={this.state.playing}
+        volume={this.state.vol}
+        onEnded={this.props.handleVideoEnd}
       >
         <Record
           playing={this.state.playing}
