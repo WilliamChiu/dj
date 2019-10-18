@@ -1,5 +1,6 @@
 import React from "react"
 import styled from "styled-components"
+import fetchers from "../utils/fetchers"
 
 const StyledInput = styled.input`
   width: 100%;
@@ -27,15 +28,27 @@ class Form extends React.Component {
     this.setState({value: event.target.value})
   }
 
-  handleSubmit(event) {
-    this.props.socket.send(JSON.stringify({
-      intent: "message added",
-      message: this.state.value
-    }))
-    this.props.appendToMessages(this.state.value)
-    this.setState({value: ''})
-
+  async handleSubmit(event) {
     event.preventDefault()
+    let playlistResults = await fetchers.playlistToIds(this.state.value)
+    if (playlistResults) {
+      playlistResults.map(id => "https://www.youtube.com/watch?v=" + id).forEach(url => {
+        this.props.socket.send(JSON.stringify({
+          intent: "message added",
+          message: url
+        }))
+        this.props.appendToMessages(url)
+      })
+      this.setState({value: ''})
+    }
+    else {
+      this.props.socket.send(JSON.stringify({
+        intent: "message added",
+        message: this.state.value
+      }))
+      this.props.appendToMessages(this.state.value)
+      this.setState({value: ''})
+    }
   }
 
   render() {
