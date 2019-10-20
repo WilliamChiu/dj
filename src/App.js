@@ -138,10 +138,10 @@ class App extends React.Component {
               this.props.role !== "no presenter" &&
               this.props.messages[0] &&
               <Controls
+                socket={this.props.socket}
                 goBack={this.props.goBack}
-                decrVol={this.props.decrVol}
                 pauseOrPlay={this.props.pauseOrPlay}
-                incrVol={this.props.incrVol}
+                setVol={this.props.setVol}
                 goForward={this.props.goForward}
               />
             }

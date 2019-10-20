@@ -177,6 +177,7 @@ class YoutubePlayer extends React.Component {
 
   handleMessage(message) {
     let parsed = JSON.parse(message.data)
+    console.log("hello there", parsed)
     let currentTime = this.player.current.getCurrentTime()
     if (parsed.intent === "go back") {
       this.player.current.seekTo(currentTime - 10, true)
@@ -188,23 +189,16 @@ class YoutubePlayer extends React.Component {
       }
     } else if (parsed.intent === "go forward") {
       this.player.current.seekTo(currentTime + 10, true)
-    } else if(parsed.intent == "increase volume") {
-      let currentVol = this.state.vol
-      if(this.state.vol < .9){
-        this.setState({vol: currentVol+.1})
-      }
-    } else if(parsed.intent == "decrease volume") {
-      let currentVol = this.state.vol
-      if(this.state.vol > .1){
-        this.setState({vol: currentVol-.1})
-      }
+    } else if(parsed.intent === "set volume"){
+      let volume = parseInt(parsed.value)/100
+      console.log("Volume is " + String(volume))
+      this.setState({vol: volume})
     }
   }
 
   onReady(event) {
     this.setState({
       player: event.target,
-      vol: .5,
     });
   }
 
@@ -226,7 +220,7 @@ class YoutubePlayer extends React.Component {
       <Container
         table={this.props.table}
         playing={this.state.playing}
-        volume={this.state.vol}
+        vol={this.state.vol}
         onEnded={this.props.handleVideoEnd}
       >
         <Record
@@ -243,6 +237,7 @@ class YoutubePlayer extends React.Component {
             height="400px"
             controls={true}
             playing={this.state.playing}
+            volume={this.state.vol}
             onEnded={this.props.handleVideoEnd}
             onPause={this.onPause}
             onPlay={this.onPlay}
