@@ -16,6 +16,7 @@ const Global = createGlobalStyle`
 const ActionsContainer = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
 `
 
 const FormsContainer = styled.div`
@@ -134,9 +135,9 @@ class App extends React.Component {
           <ActionsContainer>
             <PresenterButton>{this.props.role === "pending" ? "CLIENT" : this.props.role.toUpperCase()}</PresenterButton>
             {
-              this.props.role !== "presenter" &&
-              this.props.role !== "no presenter" &&
-              this.props.messages[0] &&
+              true &&
+              this.props.socket &&
+              //this.props.messages[0] &&
               <Controls
                 socket={this.props.socket}
                 goBack={this.props.goBack}
