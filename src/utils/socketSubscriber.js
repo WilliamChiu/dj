@@ -29,8 +29,7 @@ function withSocket(Wrapped) {
       this.goBack = this.goBack.bind(this)
       this.pauseOrPlay = this.pauseOrPlay.bind(this)
       this.goForward = this.goForward.bind(this)
-      this.decrVol = this.decrVol.bind(this)
-      this.incrVol = this.incrVol.bind(this)
+      this.setVol = this.setVol.bind(this)
     }
 
     async componentDidMount() {
@@ -207,19 +206,14 @@ function withSocket(Wrapped) {
       }))
     }
 
-    decrVol(e) {
+    setVol(e) {
       if (e.detail) e.currentTarget.blur()
       this.state.socket.send(JSON.stringify({
-        intent: "decrease volume"
+        intent: "set volume",
+        value:e.target.value  
       }))
     }
 
-    incrVol(e) {
-      if (e.detail) e.currentTarget.blur()
-      this.state.socket.send(JSON.stringify({
-        intent: "increase volume"
-      }))
-    }
     onDragEnd(result) {
       // dropped outside the list
       let messages
@@ -255,9 +249,8 @@ function withSocket(Wrapped) {
         handlePresent={this.handlePresent}
         onDragEnd={this.onDragEnd}
         goBack={this.goBack}
-        decrVol={this.decrVol}
         pauseOrPlay={this.pauseOrPlay}
-        incrVol={this.incrVol}
+        setVol={this.setVol}
         goForward={this.goForward}
         table={this.state.table}
       />
