@@ -137,9 +137,10 @@ class App extends React.Component {
           <ActionsContainer>
             <PresenterButton>{this.props.role === "pending" ? "CLIENT" : this.props.role.toUpperCase()}</PresenterButton>
             {
-              true &&
+              this.props.role !== "presenter" &&
+              this.props.role !== "no presenter" &&
+              this.props.messages[0] &&
               this.props.socket &&
-              //this.props.messages[0] &&
               <Controls
                 socket={this.props.socket}
                 goBack={this.props.goBack}
