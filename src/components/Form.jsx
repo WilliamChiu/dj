@@ -30,8 +30,8 @@ class Form extends React.Component {
 
   async handleSubmit(event) {
     event.preventDefault()
-    let playlistResults = await fetchers.playlistToIds(this.state.value)
-    if (playlistResults) {
+    if (fetchers.isYoutubePlaylist(this.state.value)) {
+      let playlistResults = await fetchers.playlistToIds(this.state.value)
       playlistResults.map(id => "https://www.youtube.com/watch?v=" + id).forEach(url => {
         this.props.socket.send(JSON.stringify({
           intent: "message added",

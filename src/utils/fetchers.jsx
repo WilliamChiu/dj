@@ -15,9 +15,11 @@ export default {
     let result = await fetch(`https://noembed.com/embed?url=${url}`)
     return (await result.json()).title
   },
+  isYoutubePlaylist: url => {
+    return /list=([a-zA-Z0-9_-]+)/.test(url) && YouTubePlayer.canPlay(url)
+  },
   playlistToIds: async url => { //https://www.youtube.com/watch?v=IWm03wYBTbM&list=RDIWm03wYBTbM&start_radio=1&t=0
     return new Promise((res, rej) => {
-      if (!YouTubePlayer.canPlay(url)) res()
       let invisible = document.createElement("div")
       let returnVideos = videoIds => {
         ReactDOM.unmountComponentAtNode(invisible)

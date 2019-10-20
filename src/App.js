@@ -115,7 +115,9 @@ const getItemStyle = (isDragging, draggableStyle, draggingOver, isDropAnimating)
 const getListStyle = isDraggingOver => ({
   background: isDraggingOver ? "#ddd" : "white",
   margin: '1rem 0',
-  padding: '1rem'
+  padding: '1rem',
+  maxHeight: '10rem',
+  overflow: 'auto'
 });
 
 class App extends React.Component {
