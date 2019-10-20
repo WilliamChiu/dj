@@ -28,9 +28,11 @@ class Controls extends React.Component {
   render() {
     return (
       <div>
-        <StyledButton onClick={this.props.goBack}>-10</StyledButton>
+        <StyledButton onClick={this.props.goBack}>-10s</StyledButton>
+        <StyledButton onClick={this.props.decrVol}>-dB</StyledButton>
         <StyledButton onClick={this.props.pauseOrPlay}>play/pause</StyledButton>
-        <StyledButton onClick={this.props.goForward}>+10</StyledButton>
+        <StyledButton onClick={this.props.incrVol}>+dB</StyledButton>
+        <StyledButton onClick={this.props.goForward}>+10s</StyledButton>
       </div>
     )
   }

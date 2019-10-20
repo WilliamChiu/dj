@@ -139,7 +139,9 @@ class App extends React.Component {
               this.props.messages[0] &&
               <Controls
                 goBack={this.props.goBack}
+                decrVol={this.props.decrVol}
                 pauseOrPlay={this.props.pauseOrPlay}
+                incrVol={this.props.incrVol}
                 goForward={this.props.goForward}
               />
             }

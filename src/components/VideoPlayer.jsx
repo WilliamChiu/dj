@@ -156,7 +156,8 @@ class YoutubePlayer extends React.Component {
 
     this.state = {
       playing: true,
-      angle: 0
+      angle: 0,
+      vol: .5,
     }
 
     this.player = React.createRef()
@@ -187,12 +188,23 @@ class YoutubePlayer extends React.Component {
       }
     } else if (parsed.intent === "go forward") {
       this.player.current.seekTo(currentTime + 10, true)
+    } else if(parsed.intent == "increase volume") {
+      let currentVol = this.state.vol
+      if(this.state.vol < .9){
+        this.setState({vol: currentVol+.1})
+      }
+    } else if(parsed.intent == "decrease volume") {
+      let currentVol = this.state.vol
+      if(this.state.vol > .1){
+        this.setState({vol: currentVol-.1})
+      }
     }
   }
 
   onReady(event) {
     this.setState({
       player: event.target,
+      vol: .5,
     });
   }
 
