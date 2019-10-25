@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
-import styled, {createGlobalStyle} from 'styled-components'
+import styled, { createGlobalStyle } from 'styled-components'
 import Form from './components/Form'
 import Chat from './components/Chat'
 import Controls from './components/Controls'
@@ -82,6 +82,11 @@ const Container = styled.div`
   }
 `
 
+const Remove = styled.span`
+  cursor: pointer;
+  padding-left: 10px;
+`
+
 let prevPos = null
 
 const getItemStyle = (isDragging, draggableStyle, draggingOver, isDropAnimating) => {
@@ -91,6 +96,7 @@ const getItemStyle = (isDragging, draggableStyle, draggingOver, isDropAnimating)
       // some basic styles to make the items look a bit nicer
       userSelect: "none",
       marginBottom: "0.5rem",
+      position: "relative",
 
       // styles we need to apply on draggables
       ...draggableStyle,
@@ -105,6 +111,7 @@ const getItemStyle = (isDragging, draggableStyle, draggingOver, isDropAnimating)
       // some basic styles to make the items look a bit nicer
       userSelect: "none",
       marginBottom: "0.5rem",
+      position: "relative",
 
       // styles we need to apply on draggables
       ...draggableStyle,
@@ -121,6 +128,28 @@ const getListStyle = isDraggingOver => ({
   overflow: 'auto'
 });
 
+const Video = ({ provided, snapshot, message, onRemove }) => {
+  const [hover, setHover] = useState(false);
+  return (
+    <div
+      ref={provided.innerRef}
+      {...provided.draggableProps}
+      {...provided.dragHandleProps}
+      style={getItemStyle(
+        snapshot.isDragging,
+        provided.draggableProps.style,
+        snapshot.draggingOver,
+        snapshot.isDropAnimating
+      )}
+      onMouseOver={() => setHover(true)}
+      onMouseOut={() => setHover(false)}
+    >
+      {message.name}
+      <Remove style={{visibility: hover ? "visible" : "hidden"}} onClick={() => onRemove && onRemove()}>x</Remove>
+    </div>
+  );
+}
+
 class App extends React.Component {
   render() {
     return <DragDropContext onDragEnd={this.props.onDragEnd}>
@@ -131,7 +160,7 @@ class App extends React.Component {
           </ChatMessage>
         )
       }
-      <Global/>
+      <Global />
       <Container>
         <div>
           <ActionsContainer>
@@ -155,52 +184,41 @@ class App extends React.Component {
           {
             this.props.messages.length > 0 && <Droppable droppableId="droppable">
               {(provided, snapshot) => (
-                  <div
-                    {...provided.droppableProps}
-                    ref={provided.innerRef}
-                    style={getListStyle(snapshot.isDraggingOver)}
-                  >
-                    {this.props.messages.map((message, index) => (
-                      <Draggable key={message.time} draggableId={message.time} index={index}>
-                        {(provided, snapshot) => (
-                          <div
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            style={getItemStyle(
-                              snapshot.isDragging,
-                              provided.draggableProps.style,
-                              snapshot.draggingOver,
-                              snapshot.isDropAnimating
-                            )}
-                          >
-                            {message.name}
-                          </div>
-                        )}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </div>
-                )}
+                <div
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                  style={getListStyle(snapshot.isDraggingOver)}
+                >
+                  {this.props.messages.map((message, index) => (
+                    <Draggable key={message.time} draggableId={message.time} index={index}>
+                      {(provided, snapshot) => (
+                        <Video provided={provided} snapshot={snapshot} message={message} 
+                          onRemove={() => this.props.onRemove(index)}/>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
             </Droppable>
           }
           <FormsContainer>
-            <Form socket={this.props.socket} appendToMessages={this.props.appendToMessages}/>
-            <Divider/>
-            <Chat socket={this.props.socket} appendToChat={this.props.appendToChat}/>
+            <Form socket={this.props.socket} appendToMessages={this.props.appendToMessages} />
+            <Divider />
+            <Chat socket={this.props.socket} appendToChat={this.props.appendToChat} />
           </FormsContainer>
         </div>
-      {
-        this.props.role === "presenter" &&
-        this.props.messages[0] &&
-        <VideoPlayer
-          videoUrl={this.props.messages[0].url}
-          time={this.props.messages[0].time}
-          handleVideoEnd={this.props.handleVideoEnd}
-          socket={this.props.socket}
-          table={this.props.table}
-        />
-      }
+        {
+          this.props.role === "presenter" &&
+          this.props.messages[0] &&
+          <VideoPlayer
+            videoUrl={this.props.messages[0].url}
+            time={this.props.messages[0].time}
+            handleVideoEnd={this.props.handleVideoEnd}
+            socket={this.props.socket}
+            table={this.props.table}
+          />
+        }
       </Container>
     </DragDropContext>
   }
