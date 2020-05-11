@@ -1,6 +1,7 @@
 import React from "react"
 import fetchers from './fetchers'
 import ReactPlayer from 'react-player'
+import autocomplete from "../utils/autocomplete"
 
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
@@ -45,7 +46,7 @@ function withSocket(Wrapped) {
       document.addEventListener("visibilitychange", () => {
         if (document.visibilityState === 'visible') {
           console.log("Checking socket health...")
-          if (this.state.socket.readyState !== WebSocket.OPEN && this.state.socket.readyState !== WebSocket.CONNECTING) {
+          if (this.state.socket && this.state.socket.readyState !== WebSocket.OPEN && this.state.socket.readyState !== WebSocket.CONNECTING) {
             console.log("Remounting, websocket was ", this.state.socket.readyState)
             this.state.socket.close()
             this.makeSocket()
@@ -54,8 +55,14 @@ function withSocket(Wrapped) {
       })
     }
 
+    componentDidUpdate(prevProps, prevState) {
+      this.state.messages.forEach(message => {
+        if (!prevState.messages.find(prevMessage => prevMessage.url === message.url)) autocomplete.insert(message.name, message.url)
+      })
+    }
+
     makeSocket() {
-      let socket = new WebSocket("wss://connect.websocket.in/spec?room_id=queue-" + (window.location.pathname.slice(1) || 1))
+      let socket = new WebSocket("wss://djs.chilly.blue/" + (window.location.pathname.slice(1) || 1))
       socket.addEventListener('message', message => {
         let parsed = JSON.parse(message.data)
         if (parsed.intent === "look for presenter"
@@ -102,20 +109,20 @@ function withSocket(Wrapped) {
         }
       })
       socket.addEventListener('open', () => {
+        setTimeout(() => {
+          if (this.state.role === "pending") {
+            socket.send(JSON.stringify({
+              intent: "presenter exists",
+              messages: this.state.messages,
+            }))
+            this.setState({ role: "presenter" })
+          }
+        }, 3000)
         socket.send(JSON.stringify({intent: "look for presenter"}))
         this.setState({
           socket
         })
       })
-      setTimeout(() => {
-        if (this.state.role === "pending") {
-          socket.send(JSON.stringify({
-            intent: "presenter exists",
-            messages: this.state.messages,
-          }))
-          this.setState({ role: "presenter" })
-        }
-      }, 3000)
       return socket
     }
 
@@ -135,8 +142,7 @@ function withSocket(Wrapped) {
     }
 
     async appendToChat(chat) {
-      if (chat.message === "/table"
-        && this.state.role === "presenter") {
+      if (chat.message === "/table") {
         this.setState(state => ({
           table: !state.table
         }))
@@ -253,6 +259,7 @@ function withSocket(Wrapped) {
         setVol={this.setVol}
         goForward={this.goForward}
         table={this.state.table}
+        autocomplete={autocomplete}
       />
     }
   }
