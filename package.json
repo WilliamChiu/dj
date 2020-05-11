@@ -3,8 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "flatted": "^2.0.1",
     "isomorphic-unfetch": "^3.0.0",
+    "lzutf8": "^0.5.5",
     "react": "^16.10.2",
+    "react-autosuggest": "^9.4.3",
     "react-beautiful-dnd": "^11.0.5",
     "react-dom": "^16.10.2",
     "react-player": "^1.13.0",

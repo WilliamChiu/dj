@@ -137,9 +137,10 @@ class App extends React.Component {
           <ActionsContainer>
             <PresenterButton>{this.props.role === "pending" ? "CLIENT" : this.props.role.toUpperCase()}</PresenterButton>
             {
-              true &&
+              this.props.role !== "presenter" &&
+              this.props.role !== "no presenter" &&
+              this.props.messages[0] &&
               this.props.socket &&
-              //this.props.messages[0] &&
               <Controls
                 socket={this.props.socket}
                 goBack={this.props.goBack}
@@ -185,7 +186,7 @@ class App extends React.Component {
             </Droppable>
           }
           <FormsContainer>
-            <Form socket={this.props.socket} appendToMessages={this.props.appendToMessages}/>
+            <Form socket={this.props.socket} appendToMessages={this.props.appendToMessages} autocomplete={this.props.autocomplete}/>
             <Divider/>
             <Chat socket={this.props.socket} appendToChat={this.props.appendToChat}/>
           </FormsContainer>
@@ -197,6 +198,17 @@ class App extends React.Component {
           videoUrl={this.props.messages[0].url}
           time={this.props.messages[0].time}
           handleVideoEnd={this.props.handleVideoEnd}
+          socket={this.props.socket}
+          table={this.props.table}
+        />
+      }
+      {
+        this.props.role !== "presenter" &&
+        this.props.messages[0] &&
+        window.location.hash === "#peek" &&
+        <VideoPlayer
+          videoUrl={this.props.messages[0].url}
+          time={this.props.messages[0].time}
           socket={this.props.socket}
           table={this.props.table}
         />

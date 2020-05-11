@@ -32,6 +32,9 @@ export default {
 
         onReady = () => {
           let player = this.ref.current.getInternalPlayer()
+          console.log(player.getPlayerState())
+          console.log(player.getPlaylist().length)
+          setInterval(() => console.log(player.getPlaylist()), 1000)
           returnVideos(player.getPlaylist())
         }
 

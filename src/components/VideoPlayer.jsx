@@ -172,12 +172,18 @@ class YoutubePlayer extends React.Component {
   componentDidMount() {
     console.log(this.props.videoUrl)
     if (!this.props.videoUrl) this.props.handleVideoEnd()
-    this.props.socket && this.props.socket.addEventListener('message', this.handleMessage)
+    if (this.props.socket) {
+      this.props.socket.addEventListener('message', this.handleMessage)
+      if (window.location.hash === "#peek") {
+        this.props.socket.send(JSON.stringify({
+          intent: "playback time?"
+        }))
+      }
+    }
   }
 
   handleMessage(message) {
     let parsed = JSON.parse(message.data)
-    console.log("hello there", parsed)
     let currentTime = this.player.current.getCurrentTime()
     if (parsed.intent === "go back") {
       this.player.current.seekTo(currentTime - 10, true)
@@ -193,6 +199,13 @@ class YoutubePlayer extends React.Component {
       let volume = parseInt(parsed.value)/100
       console.log("Volume is " + String(volume))
       this.setState({vol: volume})
+    } else if(parsed.intent === "playback time?"){
+      this.props.socket.send(JSON.stringify({
+        intent: "playback time!",
+        time: this.player.current.getCurrentTime()
+      }))
+    } else if(parsed.intent === "playback time!"){
+      this.player.current.seekTo(parsed.time, 'seconds')
     }
   }
 
